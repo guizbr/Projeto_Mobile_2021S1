@@ -34,6 +34,7 @@ dependencies:
   firebase_storage: ^8.0.0
   firebase_auth: ^1.0.1
   firebase_core: ^1.0.1
+  onesignal_flutter: ^2.6.3
 
 dev_dependencies:
   flutter_test:
