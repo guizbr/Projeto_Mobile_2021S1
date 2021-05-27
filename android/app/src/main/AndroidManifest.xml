@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="br.com.camargo.chatonline_app">
    <application
-        android:label="chatonline_app"
+        android:label="Chat Online"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
