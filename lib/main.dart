@@ -9,7 +9,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MyApp());
-
 }
 
 class MyApp extends StatelessWidget {
@@ -21,11 +20,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Chat Flutter',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        iconTheme: IconThemeData(
-          color: Colors.blue,
-        )
-      ),
+          primarySwatch: Colors.blue,
+          iconTheme: IconThemeData(
+            color: Colors.blue,
+          )),
       home: ChatScreen(),
     );
   }

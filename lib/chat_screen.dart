@@ -15,7 +15,6 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-
   final GoogleSignIn googleSignIn = GoogleSignIn();
   bool _isLoading = false;
 
@@ -33,19 +32,22 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<User> _getUser() async {
-    if(_currentUser != null) return _currentUser;
+    if (_currentUser != null) return _currentUser;
 
-    try{
-      final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
-      final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+    try {
+      final GoogleSignInAccount googleSignInAccount =
+          await googleSignIn.signIn();
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
         idToken: googleSignInAuthentication.idToken,
         accessToken: googleSignInAuthentication.accessToken,
       );
-      final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      final UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
       final User user = userCredential.user;
       return user;
-    } catch(error) {
+    } catch (error) {
       return null;
     }
   }
@@ -53,20 +55,24 @@ class _ChatScreenState extends State<ChatScreen> {
   void _sendMessage({String text, File imgFile}) async {
     final User user = await _getUser();
 
-    if(user == null){
-      final snackBar = SnackBar(content: Text('Não foi possível fazer o login. Tente Novamente!'));
+    if (user == null) {
+      final snackBar = SnackBar(
+          content: Text('Não foi possível fazer o login. Tente Novamente!'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
 
     Map<String, dynamic> data = {
       "uid": user.uid,
       "senderName": user.displayName,
-      "senderPhotoUrl":user.photoURL,
+      "senderPhotoUrl": user.photoURL,
       "time": Timestamp.now(),
     };
 
-    if(imgFile != null){
-      UploadTask task = FirebaseStorage.instance.ref().child(DateTime.now().millisecondsSinceEpoch.toString()).putFile(imgFile);
+    if (imgFile != null) {
+      UploadTask task = FirebaseStorage.instance
+          .ref()
+          .child(DateTime.now().millisecondsSinceEpoch.toString())
+          .putFile(imgFile);
       setState(() {
         _isLoading = true;
       });
@@ -78,7 +84,7 @@ class _ChatScreenState extends State<ChatScreen> {
       });
     }
 
-    if(text != null) data['text'] = text;
+    if (text != null) data['text'] = text;
 
     FirebaseFirestore.instance.collection("messages").add(data);
   }
@@ -86,54 +92,62 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          _currentUser != null ? "Olá, ${_currentUser.displayName}" : "Chat App"
-        ),
-        centerTitle: true,
-        elevation: 0,
+        appBar: AppBar(
+          title: Text(_currentUser != null
+              ? "Olá, ${_currentUser.displayName}"
+              : "Chat App"),
+          centerTitle: true,
+          elevation: 0,
           actions: [
-            _currentUser != null ? IconButton(
-              icon: Icon(Icons.exit_to_app),
-              onPressed: (){
-                FirebaseAuth.instance.signOut();
-                googleSignIn.signOut();
-                final snackBar = SnackBar(content: Text('Você saiu com sucesso!'));
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              },
-            ) : Container(),
+            _currentUser != null
+                ? IconButton(
+                    icon: Icon(Icons.exit_to_app),
+                    onPressed: () {
+                      FirebaseAuth.instance.signOut();
+                      googleSignIn.signOut();
+                      final snackBar =
+                          SnackBar(content: Text('Você saiu com sucesso!'));
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    },
+                  )
+                : Container(),
           ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
+        ),
+        body: Column(
+          children: [
+            Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance.collection("messages").orderBy("time").snapshots(),
-                builder: (context, snapshot){
-                  switch(snapshot.connectionState){
+                stream: FirebaseFirestore.instance
+                    .collection("messages")
+                    .orderBy("time")
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
                     case ConnectionState.none:
                     case ConnectionState.waiting:
                       return Center(
                         child: CircularProgressIndicator(),
                       );
-                     default:
-                      List<DocumentSnapshot> documents = snapshot.data.docs.reversed.toList();
+                    default:
+                      List<DocumentSnapshot> documents =
+                          snapshot.data.docs.reversed.toList();
 
                       return ListView.builder(
                           itemCount: documents.length,
                           reverse: true,
-                          itemBuilder: (context, index){
-                            return ChatMessage(documents[index].data(), documents[index].data()["uid"] == _currentUser?.uid);
-                          }
-                      );
+                          itemBuilder: (context, index) {
+                            return ChatMessage(
+                                documents[index].data(),
+                                documents[index].data()["uid"] ==
+                                    _currentUser?.uid);
+                          });
                   }
                 },
               ),
-          ),
-          _isLoading ? LinearProgressIndicator() : Container(),
-          TextComposer(_sendMessage),
-        ],
-      )
-    );
+            ),
+            _isLoading ? LinearProgressIndicator() : Container(),
+            TextComposer(_sendMessage),
+          ],
+        ));
   }
 }
