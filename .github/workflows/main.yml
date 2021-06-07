@@ -17,7 +17,6 @@ jobs:
         with:
           channel: 'beta'
       - run: |
-          flutter pub get
           flutter build apk
 
         # Upload generated apk to the artifacts.
