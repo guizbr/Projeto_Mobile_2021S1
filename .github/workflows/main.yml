@@ -9,14 +9,15 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-      - name: set up JDK 1.8
-        uses: actions/setup-java@v1
+      - uses: actions/setup-java@v1
         with:
-          java-version: 1.8
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-      - name: build debug
-        run: ./gradlew assembleDevDebug
+          java-version: '12.x'
+      - uses: subosito/flutter-action@v1
+        with:
+            channel: 'beta'
+      # Build apk.
+      - run: flutter build apk
+      
       - name: Upload artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
