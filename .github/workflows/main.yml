@@ -14,7 +14,7 @@ jobs:
         with:
           java-version: 1.8
       - name: Make gradlew executable
-        run: chmod +x ./gradlew
+        run: chmod +x /android/gradlew
       - name: build debug
         run: ./gradlew assembleDevDebug
       - name: Upload artifact to Firebase App Distribution
