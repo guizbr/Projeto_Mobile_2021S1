@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Chat Flutter',
       theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: Colors.red,
           iconTheme: IconThemeData(
             color: Colors.blue,
           )),
